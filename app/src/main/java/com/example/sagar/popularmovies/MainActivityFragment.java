@@ -1,5 +1,6 @@
 package com.example.sagar.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,11 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
-import org.json.JSONArray;
+import com.example.sagar.popularmovies.Model.MovieModel;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,10 +42,11 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+
         GridView gridView = (GridView) view.findViewById(R.id.gridView);
         gridView.setAdapter(new ImageAdapter(getActivity()));
 
-        initateLoading();
+        startLoading();
         listeners(view);
 
         return view;
@@ -52,6 +55,21 @@ public class MainActivityFragment extends Fragment {
     private void listeners(View view){
 
         GridView gridView = (GridView) view.findViewById(R.id.gridView);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ImageAdapter adapter = (ImageAdapter) parent.getAdapter();
+                MovieModel movie = adapter.getItem(position);
+
+
+
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("MovieObject", movie.bundle());
+                getActivity().startActivity(intent);
+            }
+        });
 
         gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -62,14 +80,14 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount >= totalItemCount) {
-                    initateLoading();
+                    startLoading();
                 }
             }
         });
 
     }
 
-    private void initateLoading (){
+    private void startLoading (){
 
         if(!movieLoading)
         {
@@ -82,12 +100,12 @@ public class MainActivityFragment extends Fragment {
     }
 
 
-    public class FetchMovieInformation extends AsyncTask<Integer, Void, ArrayList<String>> {
+    public class FetchMovieInformation extends AsyncTask<Integer, Void, ArrayList<MovieModel>> {
 
         public  final String LOG_TAG = FetchMovieInformation.class.getSimpleName();
 
         @Override
-        protected ArrayList<String> doInBackground(Integer... params) {
+        protected ArrayList<MovieModel> doInBackground(Integer... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -157,7 +175,7 @@ public class MainActivityFragment extends Fragment {
             Log.d(LOG_TAG, "QUERY URI: " + movieJsonStr);
 
             try{
-                return  movieDataFromJson(movieJsonStr);
+                return  MovieModel.movieDataFromJson(movieJsonStr);
             }
             catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
@@ -168,31 +186,12 @@ public class MainActivityFragment extends Fragment {
 
         }
 
-        private ArrayList<String> movieDataFromJson(String movieJsonStr) throws JSONException {
-
-            final String MD_RESULTS = "results";
-            final String MD_POSTER = "poster_path";
-
-            JSONObject movieJson = new JSONObject(movieJsonStr);
-            JSONArray movieResultArray = movieJson.getJSONArray(MD_RESULTS);
-
-            ArrayList<String> moviePosterlinks = new ArrayList<>();
-
-
-            for(int i = 0; i < movieResultArray.length(); i++) {
-
-                JSONObject movie = movieResultArray.getJSONObject(i);
-                moviePosterlinks.add("http://image.tmdb.org/t/p/w185" + movie.getString(MD_POSTER));
-            }
-
-//            Log.d(LOG_TAG, "QUERY URI: " + movieJsonStr);
-            return moviePosterlinks;
-        }
-
         @Override
-        protected void onPostExecute(ArrayList<String> result) {
-            if(result != null){
-                movieUrls.getMoviePosterUrls(result);
+        protected void onPostExecute(ArrayList<MovieModel> result) {
+
+            if(result.size() != 0){
+                movieUrls.setMovieLists(result);
+                startLoading();
             }
             movieLoading = false;
         }

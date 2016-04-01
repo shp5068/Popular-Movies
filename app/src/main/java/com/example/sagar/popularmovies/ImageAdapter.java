@@ -1,12 +1,14 @@
 package com.example.sagar.popularmovies;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.example.sagar.popularmovies.Model.MovieModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -20,23 +22,28 @@ public class ImageAdapter extends BaseAdapter
 {
     private Context context;
     private LayoutInflater inflater;
-    private String[] imageUrls;
-    public static ArrayList<String> movieUrls = new ArrayList<String>();
+    public ArrayList<String> movieUrls  = new ArrayList<>();
+    public ArrayList<MovieModel> movieList = new ArrayList<>();
 
     public ImageAdapter(Context context) {
         inflater = LayoutInflater.from(context);
         this.context = context;
     }
 
+    public void setMovieLists(ArrayList<MovieModel> movieList){
+        this.movieList.addAll(movieList);
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getCount() {
+        Log.d("Get Count Two: ", String.valueOf(movieUrls.size()));
         return movieUrls.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public MovieModel getItem(int position) {
+        return movieList.get(position);
     }
 
     @Override
@@ -51,14 +58,9 @@ public class ImageAdapter extends BaseAdapter
         }
 
         Picasso.with(context)
-                .load(movieUrls.get(position))
+                .load("http://image.tmdb.org/t/p/w185" + movieUrls.get(position))
                 .into((ImageView) convertView);
 
         return convertView;
-    }
-
-    public void getMoviePosterUrls(ArrayList<String> imageUrls){
-        movieUrls.addAll(imageUrls);
-        notifyDataSetChanged();
     }
 }
