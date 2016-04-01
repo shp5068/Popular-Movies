@@ -9,14 +9,19 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 /**
  * Created by Sagar on 3/30/16.
+ * ImageAdapter - loads images into ImageView using Picasso
+ *
  */
 public class ImageAdapter extends BaseAdapter
 {
     private Context context;
     private LayoutInflater inflater;
     private String[] imageUrls;
+    public static ArrayList<String> movieUrls = new ArrayList<String>();
 
     public ImageAdapter(Context context) {
         inflater = LayoutInflater.from(context);
@@ -26,7 +31,7 @@ public class ImageAdapter extends BaseAdapter
 
     @Override
     public int getCount() {
-        return eatFoodyImages.length;
+        return movieUrls.size();
     }
 
     @Override
@@ -46,31 +51,14 @@ public class ImageAdapter extends BaseAdapter
         }
 
         Picasso.with(context)
-                .load(eatFoodyImages[position])
+                .load(movieUrls.get(position))
                 .into((ImageView) convertView);
 
         return convertView;
     }
 
-    public void getMoviePosterUrls(String[] imageUrls){
-        eatFoodyImages = imageUrls;
+    public void getMoviePosterUrls(ArrayList<String> imageUrls){
+        movieUrls.addAll(imageUrls);
         notifyDataSetChanged();
     }
-
-    public static String[] eatFoodyImages = {
-            "http://i.imgur.com/rFLNqWI.jpg",
-            "http://i.imgur.com/C9pBVt7.jpg",
-            "http://i.imgur.com/rT5vXE1.jpg",
-            "http://i.imgur.com/aIy5R2k.jpg",
-            "http://i.imgur.com/MoJs9pT.jpg",
-            "http://i.imgur.com/S963yEM.jpg",
-            "http://i.imgur.com/rLR2cyc.jpg",
-            "http://i.imgur.com/SEPdUIx.jpg",
-            "http://i.imgur.com/aC9OjaM.jpg",
-            "http://i.imgur.com/76Jfv9b.jpg",
-            "http://i.imgur.com/fUX7EIB.jpg",
-            "http://i.imgur.com/syELajx.jpg",
-            "http://i.imgur.com/COzBnru.jpg",
-            "http://i.imgur.com/Z3QjilA.jpg",
-    };
 }

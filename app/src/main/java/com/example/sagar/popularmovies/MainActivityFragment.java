@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,6 +29,8 @@ import java.net.URL;
 public class MainActivityFragment extends Fragment {
 
     private ImageAdapter movieUrls;
+    private int pageNumber = 0;
+    private boolean movieLoading = false;
 
     public MainActivityFragment() {
     }
@@ -36,22 +40,54 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        FetchMovieInformation MovieTask = new FetchMovieInformation();
-        MovieTask.execute();
-        movieUrls = new ImageAdapter(getActivity());
-
         GridView gridView = (GridView) view.findViewById(R.id.gridView);
         gridView.setAdapter(new ImageAdapter(getActivity()));
+
+        initateLoading();
+        listeners(view);
 
         return view;
     }
 
-    public class FetchMovieInformation extends AsyncTask<Void, Void, String[]> {
+    private void listeners(View view){
+
+        GridView gridView = (GridView) view.findViewById(R.id.gridView);
+
+        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount >= totalItemCount) {
+                    initateLoading();
+                }
+            }
+        });
+
+    }
+
+    private void initateLoading (){
+
+        if(!movieLoading)
+        {
+            final FetchMovieInformation MovieTask = new FetchMovieInformation();
+            pageNumber +=1;
+            MovieTask.execute(pageNumber);
+            movieUrls = new ImageAdapter(getActivity());
+            movieLoading = true;
+        }
+    }
+
+
+    public class FetchMovieInformation extends AsyncTask<Integer, Void, ArrayList<String>> {
 
         public  final String LOG_TAG = FetchMovieInformation.class.getSimpleName();
 
         @Override
-        protected String[] doInBackground(Void... params) {
+        protected ArrayList<String> doInBackground(Integer... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -60,15 +96,17 @@ public class MainActivityFragment extends Fragment {
 
             String movieJsonStr;
 
-            String APPID = "d83d5b3578ea3015ea397f36fe3736cc";
+            String APPID = "";
             try {
                 final String MOVIES_BASE_URL =
                         "http://api.themoviedb.org/3/movie/";
                 final String PREF_PARAM = "popular";
+                final String PAGE_PARAM = "page";
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                         .appendPath(PREF_PARAM)
+                        .appendQueryParameter(PAGE_PARAM, String.valueOf(params[0]))
                         .appendQueryParameter(APPID_PARAM, APPID)
                         .build();
 
@@ -119,7 +157,7 @@ public class MainActivityFragment extends Fragment {
             Log.d(LOG_TAG, "QUERY URI: " + movieJsonStr);
 
             try{
-                return movieDataFromJson(movieJsonStr);
+                return  movieDataFromJson(movieJsonStr);
             }
             catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
@@ -130,7 +168,7 @@ public class MainActivityFragment extends Fragment {
 
         }
 
-        private String[] movieDataFromJson(String movieJsonStr) throws JSONException {
+        private ArrayList<String> movieDataFromJson(String movieJsonStr) throws JSONException {
 
             final String MD_RESULTS = "results";
             final String MD_POSTER = "poster_path";
@@ -138,12 +176,13 @@ public class MainActivityFragment extends Fragment {
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieResultArray = movieJson.getJSONArray(MD_RESULTS);
 
-            String[] moviePosterlinks = new String[movieResultArray.length()];
+            ArrayList<String> moviePosterlinks = new ArrayList<>();
+
 
             for(int i = 0; i < movieResultArray.length(); i++) {
 
                 JSONObject movie = movieResultArray.getJSONObject(i);
-                moviePosterlinks[i] = "http://image.tmdb.org/t/p/w185" + movie.getString(MD_POSTER);
+                moviePosterlinks.add("http://image.tmdb.org/t/p/w185" + movie.getString(MD_POSTER));
             }
 
 //            Log.d(LOG_TAG, "QUERY URI: " + movieJsonStr);
@@ -151,10 +190,11 @@ public class MainActivityFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
+        protected void onPostExecute(ArrayList<String> result) {
             if(result != null){
                 movieUrls.getMoviePosterUrls(result);
             }
+            movieLoading = false;
         }
     }
 }
