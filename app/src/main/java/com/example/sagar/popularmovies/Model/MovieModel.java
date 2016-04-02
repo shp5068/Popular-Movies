@@ -1,7 +1,6 @@
 package com.example.sagar.popularmovies.Model;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,27 +68,13 @@ public class MovieModel {
             movieList.add(new MovieModel(
                             singleMovieData.getString(MOVIE_TITLE),
                             singleMovieData.getString(MOVIE_POSTER_PATH),
-                            singleMovieData.getString(MOVIE_OVERVIEW),
+                           "http://image.tmdb.org/t/p/w185" + singleMovieData.getString(MOVIE_OVERVIEW),
                             singleMovieData.getString(MOVIE_RELEASE_DATE),
                             Double.parseDouble(singleMovieData.getString(MOVIE_USER_RATING)))
             );
         }
 
         return movieList;
-    }
-
-    public static ArrayList<String> getPosterLinksArray(ArrayList<MovieModel> movieList){
-        ArrayList<String> posterLinksArray = new ArrayList<>();
-
-        Log.d("GetPosterLinkArray: ", String.valueOf(posterLinksArray.size()));
-        Log.d("GetPosterLinkArray: ", String.valueOf(movieList.size()));
-
-        for(int i = posterLinksArray.size(); i < movieList.size(); i++){
-            posterLinksArray.add(movieList.get(i).moviePosterPath);
-        }
-
-        return posterLinksArray;
-
     }
 
     public Bundle bundle(){

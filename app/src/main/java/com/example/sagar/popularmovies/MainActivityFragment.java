@@ -34,7 +34,9 @@ public class MainActivityFragment extends Fragment {
     private int pageNumber = 0;
     private boolean movieLoading = false;
 
-    public MainActivityFragment() {
+    public MainActivityFragment()
+    {
+
     }
 
     @Override
@@ -44,7 +46,8 @@ public class MainActivityFragment extends Fragment {
 
 
         GridView gridView = (GridView) view.findViewById(R.id.gridView);
-        gridView.setAdapter(new ImageAdapter(getActivity()));
+        movieUrls = new ImageAdapter(getActivity());
+        gridView.setAdapter(movieUrls);
 
         startLoading();
         listeners(view);
@@ -78,8 +81,10 @@ public class MainActivityFragment extends Fragment {
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount >= totalItemCount) {
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount >= totalItemCount)
+                {
                     startLoading();
                 }
             }
@@ -91,10 +96,9 @@ public class MainActivityFragment extends Fragment {
 
         if(!movieLoading)
         {
-            final FetchMovieInformation MovieTask = new FetchMovieInformation();
+            FetchMovieInformation MovieTask = new FetchMovieInformation();
             pageNumber +=1;
             MovieTask.execute(pageNumber);
-            movieUrls = new ImageAdapter(getActivity());
             movieLoading = true;
         }
     }
@@ -151,14 +155,12 @@ public class MainActivityFragment extends Fragment {
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
                     return null;
                 }
                 movieJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e("PlaceholderFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
+                Log.e("PlaceholderFragment: ", "Error ", e);
+
                 return null;
             } finally{
                 if (urlConnection != null) {
@@ -168,13 +170,14 @@ public class MainActivityFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                        Log.e("PlaceholderFragment: ", "Error closing stream", e);
                     }
                 }
             }
             Log.d(LOG_TAG, "QUERY URI: " + movieJsonStr);
 
             try{
+                Log.d(LOG_TAG, "Returned from BackGround: " + movieJsonStr);
                 return  MovieModel.movieDataFromJson(movieJsonStr);
             }
             catch (JSONException e){
@@ -188,7 +191,6 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<MovieModel> result) {
-
             if(result.size() != 0){
                 movieUrls.setMovieLists(result);
                 startLoading();

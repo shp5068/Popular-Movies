@@ -22,22 +22,25 @@ public class ImageAdapter extends BaseAdapter
 {
     private Context context;
     private LayoutInflater inflater;
-    public ArrayList<String> movieUrls  = new ArrayList<>();
-    public ArrayList<MovieModel> movieList = new ArrayList<>();
+    private final ArrayList<String> movieUrls;
+    private final ArrayList<MovieModel> movieList;
 
     public ImageAdapter(Context context) {
         inflater = LayoutInflater.from(context);
         this.context = context;
+        this.movieUrls = new ArrayList<>();
+        this.movieList = new ArrayList<>();
     }
 
-    public void setMovieLists(ArrayList<MovieModel> movieList){
-        this.movieList.addAll(movieList);
+    public void setMovieLists(ArrayList<MovieModel> mList){
+        movieList.addAll(mList);
+        movieUrls.addAll(getPosterLinksArray(mList));
+
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        Log.d("Get Count Two: ", String.valueOf(movieUrls.size()));
         return movieUrls.size();
     }
 
@@ -57,10 +60,23 @@ public class ImageAdapter extends BaseAdapter
             convertView = inflater.inflate(R.layout.grid_movie_posters, parent, false);
         }
 
+        Log.d("Link: ", movieUrls.get(position));
+
         Picasso.with(context)
-                .load("http://image.tmdb.org/t/p/w185" + movieUrls.get(position))
+                .load(movieUrls.get(position))
                 .into((ImageView) convertView);
 
         return convertView;
+    }
+
+    public static ArrayList<String> getPosterLinksArray(ArrayList<MovieModel> movieList){
+        ArrayList<String> posterLinksArray = new ArrayList<>();
+
+
+        for(int i = posterLinksArray.size(); i < movieList.size(); i++){
+            posterLinksArray.add("http://image.tmdb.org/t/p/w185" + movieList.get(i).moviePosterPath);
+        }
+
+        return posterLinksArray;
     }
 }
