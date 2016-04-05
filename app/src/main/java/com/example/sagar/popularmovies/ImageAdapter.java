@@ -1,7 +1,6 @@
 package com.example.sagar.popularmovies;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,8 +59,6 @@ public class ImageAdapter extends BaseAdapter
             convertView = inflater.inflate(R.layout.grid_movie_posters, parent, false);
         }
 
-        Log.d("Link: ", movieUrls.get(position));
-
         Picasso.with(context)
                 .load(movieUrls.get(position))
                 .into((ImageView) convertView);
@@ -74,7 +71,7 @@ public class ImageAdapter extends BaseAdapter
 
 
         for(int i = posterLinksArray.size(); i < movieList.size(); i++){
-            posterLinksArray.add("http://image.tmdb.org/t/p/w185" + movieList.get(i).moviePosterPath);
+            posterLinksArray.add(movieList.get(i).moviePosterPath);
         }
 
         return posterLinksArray;

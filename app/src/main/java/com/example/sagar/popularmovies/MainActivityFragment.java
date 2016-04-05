@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -118,13 +119,17 @@ public class MainActivityFragment extends Fragment {
 
             String movieJsonStr;
 
-            String APPID = "";
+            String APPID = "d83d5b3578ea3015ea397f36fe3736cc";
             try {
-                final String MOVIES_BASE_URL =
-                        "http://api.themoviedb.org/3/movie/";
-                final String PREF_PARAM = "popular";
+                final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String PAGE_PARAM = "page";
                 final String APPID_PARAM = "api_key";
+                final String PREF_PARAM = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .getString(
+                                getString(R.string.pref_sorting_key),
+                                getString(R.string.pref_sorting_default_value)
+                        );
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                         .appendPath(PREF_PARAM)
@@ -132,7 +137,7 @@ public class MainActivityFragment extends Fragment {
                         .appendQueryParameter(APPID_PARAM, APPID)
                         .build();
 
-                Log.d(LOG_TAG, "QUERY URI: " + builtUri.toString());
+//                Log.d(LOG_TAG, "QUERY URI: " + builtUri.toString());
 
                 URL url = new URL(builtUri.toString());
 
@@ -174,10 +179,8 @@ public class MainActivityFragment extends Fragment {
                     }
                 }
             }
-            Log.d(LOG_TAG, "QUERY URI: " + movieJsonStr);
 
             try{
-                Log.d(LOG_TAG, "Returned from BackGround: " + movieJsonStr);
                 return  MovieModel.movieDataFromJson(movieJsonStr);
             }
             catch (JSONException e){

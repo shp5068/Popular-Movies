@@ -3,7 +3,6 @@ package com.example.sagar.popularmovies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,14 +31,12 @@ public class DetailActivityFragment extends Fragment {
 
             MovieModel movie = new MovieModel(intent.getBundleExtra("MovieObject"));
             ((TextView) view.findViewById(R.id.detail_movie_title)).setText(movie.movieTitle);
-            ((TextView) view.findViewById(R.id.detail_movie_rating)).setText(String.valueOf(movie.movieUserRating));
+            ((TextView) view.findViewById(R.id.detail_movie_rating)).setText(String.valueOf(movie.movieUserRating) + " / 10");
             ((TextView) view.findViewById(R.id.detail_movie_overview)).setText(movie.movieOverview);
             ((TextView) view.findViewById(R.id.detail_movie_date)).setText(movie.movieReleaseDate);
 
-            Log.d("Movie Title: ", movie.movieTitle);
-
             Picasso.with(getActivity())
-                    .load("http://image.tmdb.org/t/p/w185" + movie.moviePosterPath)
+                    .load(movie.moviePosterPath)
                     .into((ImageView) view.findViewById(R.id.detail_movie_poster));
 
         }

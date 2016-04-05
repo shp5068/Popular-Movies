@@ -9,7 +9,6 @@
    >
 
     <TextView
-        android:text="@string/hello_world"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/detail_movie_title"
@@ -17,14 +16,11 @@
         android:gravity="center"
         />
     <TextView
-        android:text="@string/hello_world"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/detail_movie_rating"
-        android:minHeight="50dp"
-        android:textSize="15sp"
-        android:gravity="center"
-        android:paddingTop="10dp"/>
+        android:minHeight="40dp"
+        android:gravity="center"/>
 
     <ImageView
         android:layout_width="fill_parent"
@@ -33,7 +29,6 @@
         android:minHeight="225dp"/>
 
     <TextView
-        android:text="@string/hello_world"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/detail_movie_date"
@@ -42,7 +37,6 @@
         android:paddingTop="20dp"/>
 
     <TextView
-        android:text="@string/hello_world"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/detail_movie_overview"

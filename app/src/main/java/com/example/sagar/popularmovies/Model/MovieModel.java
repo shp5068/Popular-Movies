@@ -67,8 +67,8 @@ public class MovieModel {
 
             movieList.add(new MovieModel(
                             singleMovieData.getString(MOVIE_TITLE),
-                            singleMovieData.getString(MOVIE_POSTER_PATH),
-                           "http://image.tmdb.org/t/p/w185" + singleMovieData.getString(MOVIE_OVERVIEW),
+                            "http://image.tmdb.org/t/p/w185" + singleMovieData.getString(MOVIE_POSTER_PATH),
+                            singleMovieData.getString(MOVIE_OVERVIEW),
                             singleMovieData.getString(MOVIE_RELEASE_DATE),
                             Double.parseDouble(singleMovieData.getString(MOVIE_USER_RATING)))
             );
