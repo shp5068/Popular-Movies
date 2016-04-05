@@ -119,7 +119,7 @@ public class MainActivityFragment extends Fragment {
 
             String movieJsonStr;
 
-            String APPID = "d83d5b3578ea3015ea397f36fe3736cc";
+            String APPID = "";
             try {
                 final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String PAGE_PARAM = "page";
